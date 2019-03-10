@@ -1,6 +1,5 @@
 import numpy as np
 
-
 # dimension 30, -32<x<32
 def ackley_function(target_vector):
     # target_vector = target_vector.vector
