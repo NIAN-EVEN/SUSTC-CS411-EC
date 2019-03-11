@@ -15,8 +15,10 @@ def figure_plot(figurename, record):
         y[i] = s
     plt.figure()
     plt.plot(x, y)
-    plt.title(figurename)
+    plt.title(figurename[17:])
     plt.xlabel("generation")
     plt.ylabel("function value")
-    plt.savefig(figurename+ ".png")
+    plt.savefig(figurename + ".png")
+
+
 

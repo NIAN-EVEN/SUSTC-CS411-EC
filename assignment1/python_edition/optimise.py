@@ -13,7 +13,7 @@ class Solution():
     def __len__(self):
         return self.vec.size
 
-def optimise(benchmark, budget, recombination=0, mutation=0, selection=0):
+def optimise(benchmark, budget, selection, recombination, mutation):
     # get configuration
     func = benchmark[0]
     dimension = benchmark[1]
@@ -21,21 +21,22 @@ def optimise(benchmark, budget, recombination=0, mutation=0, selection=0):
     upper_bound = benchmark[3]
     mu = 100
     q = 10
+    evaluate_num = 0
     pop = init(mu, dimension, upper_bound, lower_bound, func)
+    evaluate_num += mu
     record_score = [-1 * pop[0].fitness]
     # init population
-    # TODO: integrate and debug
-    for i in range(budget):
+    while evaluate_num < budget:
+    # for i in range(budget):
         for p in pop[:mu]:
-            pop.append(IFEP_mutation(p, func))
-        pairwise_selection(pop, q, mu)
+            pop.append(mutation(p, func))
+        evaluate_num = evaluate_num + 2 * mu
+        selection(pop, q, mu)
         if -1 * pop[0].fitness < record_score[-1]:
             record_score.append(-1 * pop[0].fitness)
         else:
             record_score.append(record_score[-1])
-    save_data(func.__name__, record_score)
-    figure_plot(func.__name__, record_score)
-
+    return record_score
 
 def fitness(func, x):
     # 原函数求最小值，fitness 求最大值
@@ -52,6 +53,7 @@ def init(num, dim, ub, lb, func):
     return pop
 
 def quadratic_recombination(solution, func):
+    # TODO: test
     x1 = solution[0].vec
     fx1= solution[0].fitness
     x2 = solution[1].vec
@@ -99,6 +101,15 @@ def CEP_mutation(x, yita):
     return x_prime, yita_prime
 
 def diverse_selection(pop, group_num, group_size=2, alpha=0.1):
+    '''
+    use sum of distance between points and its center, and sum of group point fitness
+    :param pop:
+    :param group_num:
+    :param group_size:
+    :param alpha:
+    :return:
+    '''
+    # TODO: test
     popSize = len(pop)
     # 计算pop中元素的两两距离
     groups = []
@@ -107,6 +118,7 @@ def diverse_selection(pop, group_num, group_size=2, alpha=0.1):
         center = center_of_points([p.vec for p in pop])
         score = 0
         for s in pair:
+            # TODO: distance 和 fitness 归一化
             score += dist(s.vec, center.vec)
             score += s.fitness
         groups.append((pair, score))
@@ -118,6 +130,13 @@ def rank_based_selection(pop, n):
     pass
 
 def pairwise_selection(pop, q, mu):
+    '''
+    selection method in CEP and FEP
+    :param pop:
+    :param q: select q opponents for compitation
+    :param mu: population size
+    :return: truncated population
+    '''
     for p in pop:
         p.win = 0
     for p in pop:
@@ -144,6 +163,33 @@ def dist(x, y):
         distance += (x[d]-y[d])**2
     return np.sqrt(distance)
 
+def ana():
+    gen_record = []
+    for i in range(50):
+        selection = [pairwise_selection]
+        recombination = [quadratic_recombination]
+        mutation = [IFEP_mutation]
+        for benchmark, budget in zip(benchmark_lst, generation_lst):
+            record = optimise(benchmark, budget, selection[0], recombination[0], mutation[0])
+            gen_record.append(record[-1])
+    for i in range(6):
+        result = gen_record[i:50*6:6]
+        result = np.array(result)
+        print(benchmark_lst[i][0].__name__, ": ")
+        print("最优解: ", result.min())
+        print("最差解: ", result.max())
+        print("均值: ", result.mean())
+        print("方差: ", result.var())
+        print("标准差: ", result.std())
+
 if __name__ == "__main__":
-    for benchmark, budget in zip(benchmark_lst, generation_lst):
-        optimise(benchmark, budget)
+    ana()
+    # rootdir = "../graph/"
+    # selection = [pairwise_selection]
+    # recombination = [quadratic_recombination]
+    # mutation = [IFEP_mutation]
+    # for benchmark, budget in zip(benchmark_lst, generation_lst):
+    #     record = optimise(benchmark, budget, selection[0], recombination[0], mutation[0])
+    #     print(benchmark[0].__name__, ": ", record[-1])
+    #     save_data(rootdir+"EC_on_"+benchmark[0].__name__, record)
+    #     figure_plot(rootdir+"EC_on_"+benchmark[0].__name__, record)

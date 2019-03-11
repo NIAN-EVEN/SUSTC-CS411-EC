@@ -65,7 +65,7 @@ def easom_function(target_vector):
     return -np.cos(x_one) * np.cos(x_two) * np.exp(- ((x_one - np.pi) ** 2 + (x_two - np.pi) ** 2))
 
 
-benchmark_lst = [(ackley_function, 30, -32, 32), (gold_stein_price_function, 2, -2, 2), (quartic_noise_function, 30, -1.28, 1.28), (rastrigin_function, 30, -5.12, 5.12), (step_function, 30, -100, 100), (shekel_function, 4, 0, 10)]
+benchmark_lst = [(step_function, 30, -100, 100), (quartic_noise_function, 30, -1.28, 1.28), (rastrigin_function, 30, -5.12, 5.12), (ackley_function, 30, -32, 32), (gold_stein_price_function, 2, -2, 2),  (shekel_function, 4, 0, 10)]
 generation_lst = [1400, 2000, 5000, 5000, 20000, 1400, 3000]
 
 if __name__ == "__main__":
