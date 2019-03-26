@@ -1,4 +1,15 @@
 .idea/
+
+# assignment1
+.ipnb_checkpoints/
 data/
+graph/
+report/
+
 *.png
 *.csv
+*.txt
+*.ipynb
+*.pdf
+*.pptx
+*.docx

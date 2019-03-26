@@ -1,34 +1,31 @@
-from benchmark import benchmark_lst, generation_lst
-
+from benchmark import *
+from optimise import *
 
 def test_for_first_submission():
-    arithmetic_recombination = arithmetic_recombination_factory(.3)
-    population = 50
-    offsprings = 50
-    rounds = 10
-    for index in range(len(benchmark_lst)):
-        functions = benchmark_lst[index]
-        generation = 50  # using previous statement to set generation to config
-        # generation = generation_lst[index]
-        fitness, dimension, low, up = functions
-        Solution.has_bounded = True
-        Solution.dimension = dimension
-        Solution.low = low
-        Solution.up = up
-        print("=====================================================================")
-        print("Testing " + str(fitness))
-        score_lst = list()
-        for i in range(rounds):
-            result_lst, generation = evolutionary_framework_local(generation, population, generator,
-                                                                  rank_population_selector,
-                                                                  offsprings, fitness, None, rank_parent_selector,
-                                                                  cauchy_mutation_for_multiple_item, arithmetic_recombination)
-            result_lst.sort(key=lambda x: x[1])
-            score_lst.append((result_lst[0][1], result_lst[0][0].vector))
-            print("Round " + str(i) + " is finished.")
-        score_lst.sort(key=lambda x: x[0])
-        print("Best value is: " + str(score_lst[0][0]))
-        print("Best solution is: " + str(score_lst[0][1]))
-        print("Average value is: " + str(np.mean([item[0] for item in score_lst])))
-        print("Var is " + str(np.var([item[0] for item in score_lst])))
-        print("=====================================================================")
+    # arithmetic_recombination = arithmetic_recombination_factory(.3)
+    numRuns = 50
+    for benchmark, budget in zip(benchmark_lst, evaluations):
+        for s, select in enumerate(selection):
+            for r, recombine in enumerate(recombination):
+                for m, mutate in enumerate(mutation):
+                    gen_record = [sys.float_info.max]
+                    best = Solution(None, None, 0)
+                    for i in range(numRuns):
+                        print("=====================================================================")
+                        print("[Optimisation of function %s, crossoverIdx=%d, mutationId=%d, selectionIdx=%d]" %(benchmark[0].__name__, r, m, s))
+                        record, p = optimise(benchmark, budget, select, recombine, mutate)
+                        print("RUN %d: Approximate optimal value=%.16f" % (i, record[-1]))
+                        print("RUN %d: Approximate optimal optimum=%s" % (i, str(p.vec)))
+                        if record[-1] < gen_record[-1]:
+                            best = p
+                        gen_record.append(record[-1])
+                    print("=====================================================================")
+                    out_record = np.array(gen_record[1:])
+                    print("Testing " + benchmark[0].__name__)
+                    print("Best value is: " , out_record.min())
+                    print("Best solution is: " + str(best.vec))
+                    print("Average value is: " , out_record.mean())
+                    print("Var is " , out_record.var())
+
+if __name__ == "__main__":
+    test_for_first_submission()
