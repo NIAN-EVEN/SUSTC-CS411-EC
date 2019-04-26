@@ -1,10 +1,13 @@
 .idea/
+__pycache__/
 
 # assignment1
-.ipnb_checkpoints/
-data/
-graph/
-report/
+assignment1/data/
+assignment1/graph/
+assignment1/report/
+
+# assignment2
+assignment2/niching_data/
 
 *.png
 *.csv
@@ -13,3 +16,7 @@ report/
 *.pdf
 *.pptx
 *.docx
+*.xlsx
+*.cls
+*.tex
+*.jpg
