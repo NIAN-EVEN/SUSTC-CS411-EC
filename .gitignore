@@ -2,12 +2,12 @@
 __pycache__/
 
 # assignment1
-assignment1/data/
-assignment1/graph/
-assignment1/report/
+assignment1-compare_different_basic_operators/data/
+assignment1-compare_different_basic_operators/graph/
+assignment1-compare_different_basic_operators/report/
 
 # assignment2
-assignment2/niching_data/
+assignment2-compare_different_niching_methods/niching_data/
 
 *.png
 *.csv

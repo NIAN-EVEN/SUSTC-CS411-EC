@@ -1,7 +1,7 @@
 from basic_definations_and_operators.Solution import *
 from basic_definations_and_operators.Crossover import *
 from basic_definations_and_operators.Mutation import *
-from assignment2.cec2013.cec2013 import *
+from assignment2_compare_different_niching_methods.cec2013.cec2013 import *
 import random
 
 def differential_evolution(pop, param, func_id, **kw):
